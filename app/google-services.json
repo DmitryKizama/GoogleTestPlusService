@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "295984697714",
+    "project_id": "project--5358194036968195990"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295984697714:android:40dcfebb2d88fce9",
+        "android_client_info": {
+          "package_name": "com.stzemo.googletest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295984697714-k9t9qlofuflv2hlugjjmdvefr1ftg8ig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stzemo.googletest",
+            "certificate_hash": "FCE6E289873942A9D952FD488FE06011A9171BB5"
+          }
+        },
+        {
+          "client_id": "295984697714-9ucap1iss0al0nre1v9prcrsid90qub9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxxD_Nllby5lgYZO3pBjv39pwSpFbt1-Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
