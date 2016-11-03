@@ -13,9 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.stzemo.googletest.notifications.CustomNotificationManager;
 import com.stzemo.googletest.services.NotificationService;
 
-public class PageGenerateService extends Fragment implements View.OnClickListener {
+public class PageGenerate extends Fragment implements View.OnClickListener {
 
 
     public static final String BROADCAST_ACTION_PAGE_GENERATE = "BROADCASTACTIONPAGEGENERATE";
@@ -23,11 +24,10 @@ public class PageGenerateService extends Fragment implements View.OnClickListene
 
     private Button btnStart, btnStop;
     private BroadcastReceiver broadcastReceiver;
-    private int number;
     private TextView tv;
 
-    public static PageGenerateService newInstance() {
-        PageGenerateService g = new PageGenerateService();
+    public static PageGenerate newInstance() {
+        PageGenerate g = new PageGenerate();
         return g;
     }
 
@@ -51,11 +51,13 @@ public class PageGenerateService extends Fragment implements View.OnClickListene
         broadcastReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 Log.d("dfdsfsdfds", "get");
-                number = intent.getIntExtra(NEWNUMBER, 0);
+                int number = intent.getIntExtra(NEWNUMBER, 0);
                 tv.setText("New number = " + number);
+                abortBroadcast();
             }
         };
         IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION_PAGE_GENERATE);
+        intFilt.setPriority(2);
         view.getContext().registerReceiver(broadcastReceiver, intFilt);
 
         return view;

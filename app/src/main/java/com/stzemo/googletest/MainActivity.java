@@ -28,7 +28,6 @@ import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnConnectionFailedListener {
 
-
     public static final int RC_SIGN_IN = 200;
     private String TAG = "MAINACTIVITY";
 
@@ -155,21 +154,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
-                PageLogInOut p = PageLogInOut.newInstance();
-                return p;
-            } else {
-                PageGenerateService g = PageGenerateService.newInstance();
-                return g;
+            switch (position) {
+                case 0:
+                    return PageLogInOut.newInstance();
+                case 1:
+                    return PageGenerate.newInstance();
+                default:
+                    return null;
             }
         }
 
         public PageLogInOut getPageLogInOut() {
-            return (PageLogInOut)registeredFragments.get(0);
+            return (PageLogInOut) registeredFragments.get(0);
         }
 
-        public PageGenerateService getPageGenerateService() {
-            return (PageGenerateService)registeredFragments.get(1);
+        public PageGenerate getPageGenerateService() {
+            return (PageGenerate) registeredFragments.get(1);
         }
 
         @Override

@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.stzemo.googletest.PageGenerateService;
+import com.stzemo.googletest.PageGenerate;
 
 import java.util.Random;
 
@@ -18,6 +18,7 @@ public class NotificationService extends Service {
     private Thread thread;
     private BroadcastReceiver broadcastReceiver;
     private Random random = new Random();
+
 
     @Override
     public void onCreate() {
@@ -37,9 +38,10 @@ public class NotificationService extends Service {
                         if (!work) {
                             return;
                         }
-                        Intent actionIntent = new Intent(PageGenerateService.BROADCAST_ACTION_PAGE_GENERATE);
-                        actionIntent.putExtra(PageGenerateService.NEWNUMBER, random.nextInt(100));
-                        sendBroadcast(actionIntent);
+                        int number = random.nextInt(100);
+                        Intent actionIntent = new Intent(PageGenerate.BROADCAST_ACTION_PAGE_GENERATE);
+                        actionIntent.putExtra(PageGenerate.NEWNUMBER, number);
+                        sendOrderedBroadcast(actionIntent, null);
                     }
                 } catch (InterruptedException e) {
 
