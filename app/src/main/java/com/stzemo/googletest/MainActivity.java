@@ -168,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return (PageLogInOut)registeredFragments.get(0);
         }
 
+        public PageGenerateService getPageGenerateService() {
+            return (PageGenerateService)registeredFragments.get(1);
+        }
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
