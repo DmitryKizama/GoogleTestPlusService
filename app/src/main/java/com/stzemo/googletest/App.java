@@ -1,6 +1,7 @@
 package com.stzemo.googletest;
 
 import android.app.Application;
+import android.content.ComponentCallbacks;
 import android.content.Context;
 
 import com.stzemo.googletest.notifications.CustomNotificationManager;
@@ -12,6 +13,11 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         appContext = getApplicationContext();
-        new CustomNotificationManager().create();
+        CustomNotificationManager.getInstance();
+    }
+
+    @Override
+    public void unregisterComponentCallbacks(ComponentCallbacks callback) {
+        super.unregisterComponentCallbacks(callback);
     }
 }

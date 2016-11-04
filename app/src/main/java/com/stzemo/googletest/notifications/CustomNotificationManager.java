@@ -10,13 +10,26 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import com.stzemo.googletest.App;
-import com.stzemo.googletest.PageGenerate;
 import com.stzemo.googletest.R;
+import com.stzemo.googletest.activity.StartStopServiceFragment;
 
 public class CustomNotificationManager {
     private BroadcastReceiver broadcastReceiver;
     public static final String BROADCAST_ACTION_PAGE_GENERATE = "BROADCASTACTIONPAGEGENERATE";
     public static final String NEWNUMBER = "NEWNUMBER";
+
+    private static CustomNotificationManager instance;
+
+    private CustomNotificationManager() {
+        create();
+    }
+
+    public static synchronized CustomNotificationManager getInstance() {
+        if (instance == null) {
+            instance = new CustomNotificationManager();
+        }
+        return instance;
+    }
 
     public void create() {
         broadcastReceiver = new BroadcastReceiver() {
@@ -24,7 +37,6 @@ public class CustomNotificationManager {
                 Log.d("dfdsfsdfds", "get");
                 int number = intent.getIntExtra(NEWNUMBER, 0);
                 sendNotification(number);
-                abortBroadcast();
             }
         };
         IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION_PAGE_GENERATE);
@@ -37,8 +49,10 @@ public class CustomNotificationManager {
         NotificationManager nm = (NotificationManager) App.appContext.getSystemService(App.appContext.NOTIFICATION_SERVICE);
         Notification myNotication;
 
-        Intent intent = new Intent(App.appContext, PageGenerate.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(App.appContext, 1, intent, 0);
+        Intent intent = new Intent(App.appContext, StartStopServiceFragment.class);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(App.appContext, 0, intent, 0);
         Notification.Builder builder = new Notification.Builder(App.appContext);
 
         builder.setContentTitle("TEST Notification");
@@ -46,11 +60,12 @@ public class CustomNotificationManager {
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setContentIntent(pendingIntent);
         builder.setSubText("Your new number = " + number);
-        builder.setNumber(100);
         builder.build();
 
-        myNotication = builder.getNotification();
-        nm.notify(11, myNotication);
+        myNotication = builder.build();
+        myNotication.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        nm.notify(0, myNotication);
     }
 
 }

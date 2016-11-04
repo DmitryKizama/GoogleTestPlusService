@@ -1,4 +1,4 @@
-package com.stzemo.googletest;
+package com.stzemo.googletest.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,23 +8,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.stzemo.googletest.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnConnectionFailedListener {
 
@@ -69,10 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pager = (ViewPager) findViewById(R.id.vpMain);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-
-        btnLogOut.setVisibility(View.GONE);
-        signInButton.setVisibility(View.VISIBLE);
-//        updateUI(false);
+        updateUI(false);
     }
 
     @Override
@@ -88,12 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void logOut() {
-        Log.d(TAG, "logOut");
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
                         updateUI(false);
+                        pagerAdapter.getLogInOutFragment().updateUI(false);
                     }
                 });
     }
@@ -106,30 +100,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
-    }
-
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            GoogleSignInAccount acct = result.getSignInAccount();
-            pagerAdapter.getPageLogInOut().loadData(getApplicationContext(), acct.getDisplayName(), acct.getEmail(), acct.getPhotoUrl().toString());
+        if (Auth.GoogleSignInApi.getSignInResultFromIntent(data).isSuccess()) {
             updateUI(true);
-            Toast.makeText(this, "LOGGED", Toast.LENGTH_SHORT).show();
+            pagerAdapter.getLogInOutFragment().loadData(Auth.GoogleSignInApi.getSignInResultFromIntent(data), getBaseContext());
         } else {
-            Toast.makeText(this, "FAILED", Toast.LENGTH_SHORT).show();
-            // Signed out, show unauthenticated UI.
-//            updateUI(false);
+            updateUI(false);
         }
     }
 
     private void updateUI(boolean update) {
-        pagerAdapter.getPageLogInOut().updateUI(update);
         if (update) {
             btnLogOut.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);
@@ -156,20 +135,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return PageLogInOut.newInstance();
+                    return LogInOutFragment.newInstance();
                 case 1:
-                    return PageGenerate.newInstance();
+                    return StartStopServiceFragment.newInstance();
                 default:
                     return null;
             }
         }
 
-        public PageLogInOut getPageLogInOut() {
-            return (PageLogInOut) registeredFragments.get(0);
+        public LogInOutFragment getLogInOutFragment() {
+            return (LogInOutFragment) registeredFragments.get(0);
         }
 
-        public PageGenerate getPageGenerateService() {
-            return (PageGenerate) registeredFragments.get(1);
+        public StartStopServiceFragment getPageGenerateService() {
+            return (StartStopServiceFragment) registeredFragments.get(1);
         }
 
         @Override
