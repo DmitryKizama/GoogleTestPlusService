@@ -1,22 +1,18 @@
 package com.stzemo.googletest.services;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.stzemo.googletest.PageGenerate;
+import com.stzemo.googletest.activity.StartStopServiceFragment;
 
 import java.util.Random;
 
 public class NotificationService extends Service {
 
-    private volatile boolean work = true;
-    private Handler handler = new Handler();
+    public static volatile boolean serviceWork = false;
     private Thread thread;
-    private BroadcastReceiver broadcastReceiver;
     private Random random = new Random();
 
 
@@ -28,19 +24,19 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        serviceWork = true;
         thread = new Thread() {
             @Override
             public void run() {
                 try {
-                    while (work) {
-                        Thread.sleep(5000);
-                        if (!work) {
+                    while (serviceWork) {
+                        Thread.sleep(2000);
+                        if (!serviceWork) {
                             return;
                         }
                         int number = random.nextInt(100);
-                        Intent actionIntent = new Intent(PageGenerate.BROADCAST_ACTION_PAGE_GENERATE);
-                        actionIntent.putExtra(PageGenerate.NEWNUMBER, number);
+                        Intent actionIntent = new Intent(StartStopServiceFragment.BROADCAST_ACTION_PAGE_GENERATE);
+                        actionIntent.putExtra(StartStopServiceFragment.NEWNUMBER, number);
                         sendOrderedBroadcast(actionIntent, null);
                     }
                 } catch (InterruptedException e) {
@@ -63,6 +59,6 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        work = false;
+        serviceWork = false;
     }
 }

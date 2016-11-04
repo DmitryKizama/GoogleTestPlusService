@@ -1,4 +1,4 @@
-package com.stzemo.googletest;
+package com.stzemo.googletest.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.stzemo.googletest.notifications.CustomNotificationManager;
+import com.stzemo.googletest.R;
 import com.stzemo.googletest.services.NotificationService;
 
-public class PageGenerate extends Fragment implements View.OnClickListener {
+public class StartStopServiceFragment extends Fragment implements View.OnClickListener {
 
 
     public static final String BROADCAST_ACTION_PAGE_GENERATE = "BROADCASTACTIONPAGEGENERATE";
@@ -26,8 +26,8 @@ public class PageGenerate extends Fragment implements View.OnClickListener {
     private BroadcastReceiver broadcastReceiver;
     private TextView tv;
 
-    public static PageGenerate newInstance() {
-        PageGenerate g = new PageGenerate();
+    public static StartStopServiceFragment newInstance() {
+        StartStopServiceFragment g = new StartStopServiceFragment();
         return g;
     }
 
@@ -44,7 +44,8 @@ public class PageGenerate extends Fragment implements View.OnClickListener {
         btnStart = (Button) view.findViewById(R.id.btnStart);
         btnStart.setOnClickListener(this);
         btnStop = (Button) view.findViewById(R.id.btnStop);
-        btnStop.setVisibility(View.GONE);
+        updateUi(NotificationService.serviceWork);
+
         btnStop.setOnClickListener(this);
         tv = (TextView) view.findViewById(R.id.tv);
 
@@ -63,20 +64,34 @@ public class PageGenerate extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    private void updateUi(boolean flag) {
+        if (flag) {
+            btnStop.setVisibility(View.VISIBLE);
+            btnStart.setVisibility(View.GONE);
+        } else {
+            btnStop.setVisibility(View.GONE);
+            btnStart.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnStart:
-                Log.d("dfdsfsdfds", "work");
+                Log.d("dfdsfsdfds", "serviceWork");
                 view.getContext().startService(new Intent(view.getContext(), NotificationService.class));
-                btnStart.setVisibility(View.GONE);
-                btnStop.setVisibility(View.VISIBLE);
+                updateUi(true);
                 break;
             case R.id.btnStop:
                 view.getContext().stopService(new Intent(view.getContext(), NotificationService.class));
-                btnStop.setVisibility(View.GONE);
-                btnStart.setVisibility(View.VISIBLE);
+                updateUi(false);
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().unregisterReceiver(broadcastReceiver);
     }
 }
