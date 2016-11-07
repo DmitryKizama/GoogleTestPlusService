@@ -42,30 +42,36 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.page_generate_service, container, false);
         btnStart = (Button) view.findViewById(R.id.btnStart);
-        btnStart.setOnClickListener(this);
         btnStop = (Button) view.findViewById(R.id.btnStop);
-        updateUi(NotificationService.serviceWork);
 
+        btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
         tv = (TextView) view.findViewById(R.id.tv);
 
         broadcastReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                Log.d("dfdsfsdfds", "get");
-                int number = intent.getIntExtra(NEWNUMBER, 0);
-                tv.setText("New number = " + number);
+                tv.setText("New number = " + intent.getIntExtra(NEWNUMBER, 0));
                 abortBroadcast();
             }
         };
-        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION_PAGE_GENERATE);
-        intFilt.setPriority(2);
-        view.getContext().registerReceiver(broadcastReceiver, intFilt);
-
         return view;
     }
 
-    private void updateUi(boolean flag) {
-        if (flag) {
+    private void registerBroadcast() {
+        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION_PAGE_GENERATE);
+        intFilt.setPriority(2);
+        getContext().registerReceiver(broadcastReceiver, intFilt);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setVisibility(NotificationService.serviceWork);
+        registerBroadcast();
+    }
+
+    private void setVisibility(boolean visibility) {
+        if (visibility) {
             btnStop.setVisibility(View.VISIBLE);
             btnStart.setVisibility(View.GONE);
         } else {
@@ -78,20 +84,20 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnStart:
-                Log.d("dfdsfsdfds", "serviceWork");
                 view.getContext().startService(new Intent(view.getContext(), NotificationService.class));
-                updateUi(true);
+                setVisibility(true);
                 break;
             case R.id.btnStop:
                 view.getContext().stopService(new Intent(view.getContext(), NotificationService.class));
-                updateUi(false);
+                setVisibility(false);
                 break;
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         getContext().unregisterReceiver(broadcastReceiver);
     }
+
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.stzemo.googletest.App;
 import com.stzemo.googletest.R;
+import com.stzemo.googletest.activity.MainActivity;
 import com.stzemo.googletest.activity.StartStopServiceFragment;
 
 public class CustomNotificationManager {
@@ -49,7 +50,7 @@ public class CustomNotificationManager {
         NotificationManager nm = (NotificationManager) App.appContext.getSystemService(App.appContext.NOTIFICATION_SERVICE);
         Notification myNotication;
 
-        Intent intent = new Intent(App.appContext, StartStopServiceFragment.class);
+        Intent intent = new Intent(App.appContext, MainActivity.class);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(App.appContext, 0, intent, 0);
