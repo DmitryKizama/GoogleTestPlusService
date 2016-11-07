@@ -2,41 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/etSec"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="3" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_margin="15dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btnStart"
+            android:id="@+id/btnPositive"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="15dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:text="Start Service"
+            android:text="Apply"
             android:textColor="@android:color/black" />
 
         <Button
-            android:id="@+id/btnStop"
+            android:id="@+id/btnCancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="15dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:text="Stop Service"
+            android:text="Cancel"
             android:textColor="@android:color/black" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="36sp"
-        android:text="New number = "
-        android:gravity="center" />
 
 </LinearLayout>
