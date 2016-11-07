@@ -19,18 +19,18 @@ public class NotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         serviceWork = true;
+        final int sec = intent.getIntExtra(StartStopServiceFragment.EXTRA, 2) * 1000;
         thread = new Thread() {
             @Override
             public void run() {
                 try {
                     while (serviceWork) {
-                        Thread.sleep(2000);
+                        Thread.sleep(sec);
                         if (!serviceWork) {
                             return;
                         }

@@ -45,7 +45,7 @@ public class LogInOutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.page_log_in_out, container, false);
+        View view = inflater.inflate(R.layout.fragment_log_in_out, container, false);
         tvName = (TextView) view.findViewById(R.id.tvName);
         tvEmail = (TextView) view.findViewById(R.id.tvEmail);
         imView = (ImageView) view.findViewById(R.id.imProfile);
