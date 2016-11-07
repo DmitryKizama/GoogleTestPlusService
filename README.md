@@ -6,7 +6,7 @@ if you push button start service, you will see that every 2 (or you can write yo
 If you exit the application,you will get notification with new number every 2 sec. You can stop service, push "Stop service" button, that will 
 appear instead "Start service".
 
-Using:
-Glide (for download img)
-Google plus api
+Using: <br>
+Glide (for download img)<br>
+Google plus api<br>
 Service (worked, even if the app is closed)
