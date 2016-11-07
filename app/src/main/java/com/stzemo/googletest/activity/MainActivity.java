@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pager = (ViewPager) findViewById(R.id.vpMain);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-        updateUI(false);
+        setVisibility(false);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        updateUI(false);
+                        setVisibility(false);
                         pagerAdapter.getLogInOutFragment().updateUI(false);
                     }
                 });
@@ -101,15 +101,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (Auth.GoogleSignInApi.getSignInResultFromIntent(data).isSuccess()) {
-            updateUI(true);
+            setVisibility(true);
             pagerAdapter.getLogInOutFragment().loadData(Auth.GoogleSignInApi.getSignInResultFromIntent(data), getBaseContext());
         } else {
-            updateUI(false);
+            setVisibility(false);
         }
     }
 
-    private void updateUI(boolean update) {
-        if (update) {
+    private void setVisibility(boolean visibility) {
+        if (visibility) {
             btnLogOut.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);
         } else {

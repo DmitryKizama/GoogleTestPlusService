@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class NotificationService extends Service {
 
-    public static volatile boolean serviceWork = false;
+    public static volatile boolean serviceWork;
     private Thread thread;
     private Random random = new Random();
 
