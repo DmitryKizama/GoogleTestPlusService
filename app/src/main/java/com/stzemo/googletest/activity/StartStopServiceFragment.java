@@ -1,10 +1,13 @@
 package com.stzemo.googletest.activity;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +25,27 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
 
     public static final String BROADCAST_ACTION_PAGE_GENERATE = "BROADCASTACTIONPAGEGENERATE";
     public static final String NEWNUMBER = "NEWNUMBER";
-    public static final String EXTRA = "EXTRA";
-    private int secOfPeriod = 2;
 
     private Button btnStart, btnStop, btnSetPeriod;
     private BroadcastReceiver broadcastReceiver;
     private TextView tv;
+    private NotificationService nService;
+    private boolean notifServiceBound;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            notifServiceBound = true;
+            nService = ((NotificationService.LocalBinder) iBinder).getService();
+            if (nService.getServiceWork()) {
+                setVisibility(true);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            notifServiceBound = false;
+        }
+    };
 
     public static StartStopServiceFragment newInstance() {
         StartStopServiceFragment g = new StartStopServiceFragment();
@@ -49,6 +67,8 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
 
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
+
+        btnStop.setVisibility(View.GONE);
         btnSetPeriod.setOnClickListener(this);
         tv = (TextView) view.findViewById(R.id.tv);
 
@@ -70,7 +90,9 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        setVisibility(NotificationService.serviceWork);
+        if (!notifServiceBound) {
+            bindService();
+        }
         registerBroadcast();
     }
 
@@ -78,11 +100,11 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
         if (visibility) {
             btnStop.setVisibility(View.VISIBLE);
             btnStart.setVisibility(View.GONE);
-            btnSetPeriod.setVisibility(View.GONE);
+//            btnSetPeriod.setVisibility(View.GONE);
         } else {
             btnStop.setVisibility(View.GONE);
             btnStart.setVisibility(View.VISIBLE);
-            btnSetPeriod.setVisibility(View.VISIBLE);
+//            btnSetPeriod.setVisibility(View.VISIBLE);
         }
     }
 
@@ -91,12 +113,16 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
         switch (view.getId()) {
             case R.id.btnStart:
                 Intent intent = new Intent(view.getContext(), NotificationService.class);
-                intent.putExtra(EXTRA, secOfPeriod);
-                view.getContext().startService(intent);
+                getContext().startService(intent);
+                if (!notifServiceBound) {
+                    bindService();
+                }
                 setVisibility(true);
                 break;
             case R.id.btnStop:
-                view.getContext().stopService(new Intent(view.getContext(), NotificationService.class));
+                getContext().stopService(new Intent(view.getContext(), NotificationService.class));
+//                nService.stopThread();
+                unBindService();
                 setVisibility(false);
                 break;
             case R.id.btnSetPeriod:
@@ -105,14 +131,30 @@ public class StartStopServiceFragment extends Fragment implements View.OnClickLi
         }
     }
 
+    private void unBindService() {
+        getContext().unbindService(mServiceConnection);
+        notifServiceBound = false;
+    }
+
+    private void bindService() {
+        Intent intent = new Intent(getContext(), NotificationService.class);
+        getContext().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         App.appContext.unregisterReceiver(broadcastReceiver);
+        if (notifServiceBound) {
+            unBindService();
+        }
     }
 
     @Override
     public void onApplyPressed(int sec) {
-        this.secOfPeriod = sec;
+        if (notifServiceBound) {
+            nService.changeSec(sec);
+        }
     }
+
 }
